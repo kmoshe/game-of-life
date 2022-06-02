@@ -29,7 +29,7 @@ export const gameOfLifeApi = createApi({
                 url: '/cells/nextGen', 
                 method: 'POST',
                 body: request,
-            })
+            }),
         })
     })
 });

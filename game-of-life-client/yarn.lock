@@ -6732,6 +6732,7 @@ __metadata:
     react-scripts: 5.0.1
     styled-components: ^5.3.5
     typescript: ^4.6.0
+    usehooks-ts: ^2.5.4
     web-vitals: ^2.1.0
   languageName: unknown
   linkType: soft
@@ -12911,6 +12912,15 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 8993a0b642f91d7fcdbb02b7b3ac984bd3af4769686f38291fe7fcfe73dfb73d6c64d20dfb7e5e7fbf5a6da8f5392d6f8e5b00c243a04975595946e82c02b883
+  languageName: node
+  linkType: hard
+
+"usehooks-ts@npm:^2.5.4":
+  version: 2.5.4
+  resolution: "usehooks-ts@npm:2.5.4"
+  peerDependencies:
+    react: ">=16.9.0"
+  checksum: d665a6abc98b48eb19c85e97977bfc3f345d7186a6a843b363d9beb9ef1d4fca6cffc6211191828771aa693ff285118ac4897e1193f1657bd0fafbd9dacd8882
   languageName: node
   linkType: hard
 

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../../../app/store';
+import { CellStatus } from '../models/cellStatus';
 import { Generation } from '../models/generation';
 import { GetFirstGenerationRequest } from '../models/getFirstGenerationRequest';
 import { GetNextGenerationRequest } from '../models/getNextGenerationRequest';
@@ -9,12 +10,14 @@ import { GetNextGenerationResponse } from '../models/getNextGenerationResponse';
 interface GameOfLifeState {
     generation: Generation;
     loading: boolean;
+    isWipedOut: boolean;
     error: any;
 }
 
 const initialState: GameOfLifeState= {
     generation: [], 
     loading: false, 
+    isWipedOut: false,
     error: null,
 }
 
@@ -33,9 +36,10 @@ export const computeNextGeneration = createAsyncThunk(
     'gameOfLife/nextGeneration',
     async (nextGenerationRequest: GetNextGenerationRequest) => {
         try {
-            const response = await axios.post<GetNextGenerationRequest, GetNextGenerationResponse>('');
+            const response = await axios.post<GetNextGenerationResponse>(`http://localhost:4000/cells/nextGen`, nextGenerationRequest);
+            return response;
         } catch {
-
+            return null;
         }
     }
 );
@@ -44,22 +48,29 @@ export const gameOfLifeSlice = createSlice({
     name: 'gameOfLife',
     initialState,
     reducers: {
-        
     }, 
-    extraReducers: {
-        [getFirstGeneration.pending]: (state, action) => {},
-        [getFirstGeneration.fulfilled]: (state, action) => {}, 
-        [getFirstGeneration.rejected]: (state, action) => {
-            state.loading = false; 
-            state.error = action.payload;
-        },
-        [computeNextGeneration.pending]: (state, action) => {},
-        [computeNextGeneration.fulfilled]: (state, action) => {},
-        [computeNextGeneration.rejected]: (state, action) => {
-            state.loading = false; 
-            state.error = action.payload;
-        }
+    extraReducers: (builder) => {
+        builder.addCase(computeNextGeneration.fulfilled, (state, action) => {
+            if (action.payload?.data?.generation) { 
+                state.generation = [];
+                action.payload.data.generation.map((row) => { 
+                    state.generation.push(row); 
+                    if (state.isWipedOut) {
+                        const liveCells = row.filter(cellStatus => cellStatus === CellStatus.ALIVE);
+                        if (liveCells?.length > 0) {
+                            state.isWipedOut = false;
+                        }
+                    }
+                });
+            } else {
+                console.log({ action })
+            }
+        })
     }
 });
 
 export default gameOfLifeSlice.reducer;
+
+export const selectGeneration = (state: RootState) => state.gameOfLife.generation;
+
+export const selectIsWipedOut = (state: RootState) => state.gameOfLife.isWipedOut;

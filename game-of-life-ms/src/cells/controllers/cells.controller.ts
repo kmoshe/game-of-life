@@ -43,12 +43,23 @@ export class CellsController {
   computeNextGeneration(
     @Body() request: NextGenerationRequest,
   ): NextGenerationResponse {
-    const generation = this.cellsService.computeNextGeneration(
-      request.generation,
-    );
-    const response: NextGenerationResponse = {
-      generation,
-    };
-    return response;
+    if (request.generation.length > 0) {
+      const generation = this.cellsService.computeNextGeneration(
+        request.generation,
+      );
+      const response: NextGenerationResponse = {
+        generation,
+      };
+      return response;
+    } else {
+      const generation = this.cellsService.computeFirstGeneration(
+        request.rows,
+        request.columns,
+      );
+      const response = {
+        generation,
+      };
+      return response;
+    }
   }
 }
